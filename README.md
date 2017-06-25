@@ -1,6 +1,12 @@
 # Мастер-класс "Сенсорные события". Мобилизация 2017
 
-В будущем здесь появится базовый project-stub необходимый для участия в мастер-классе.
+Для запуска мастер класс необходимо операционная система на базе unix или windows 10 с последним обновлением (Creators Update) с включенным "Bash Ubuntu for Windows" [Подробнее](https://www.windowscentral.com/how-install-bash-shell-command-line-windows-10)
+
+## Первый запуск
+```bash
+npm install
+npm run watch
+```
 
 ## Полезные материалы:
 - Touch Events https://developer.mozilla.org/en-US/docs/Web/API/Touch_events
