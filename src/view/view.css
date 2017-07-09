@@ -1,10 +1,4 @@
 .image-viewer__view {
     display: block;
-    overflow: hidden;
     background-color: #333;
-    position: relative;
-}
-
-.image-viewer__inner {
-    display: block;
 }

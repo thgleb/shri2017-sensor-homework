@@ -1,6 +1,7 @@
 ym.modules.define('shri2017.imageViewer.GestureController', [
     'shri2017.imageViewer.EventManager'
 ], function (provide, EventManager) {
+
     var Controller = function (view) {
         this._view = view;
         this._eventManager = new EventManager(
@@ -15,6 +16,7 @@ ym.modules.define('shri2017.imageViewer.GestureController', [
         },
 
         _eventHandler: function (event) {
+            var state = this._view.getState();
             // to do something awesome!
         }
     });

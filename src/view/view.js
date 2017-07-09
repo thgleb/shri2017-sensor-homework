@@ -3,17 +3,7 @@ ym.modules.define('shri2017.imageViewer.View', [
     'view.css'
 ], function (provide, imageLoader) {
     var View = function (params) {
-        this._state = {
-            size: {
-                width: 0,
-                height: 0
-            },
-            position: {
-                x: 0,
-                y: 0
-            }
-        };
-
+        this._resetData();
         this._setupDOM(params);
         this.setURL(params.url);
     };
@@ -30,52 +20,76 @@ ym.modules.define('shri2017.imageViewer.View', [
             return this._holderElem.parentElement;
         },
 
-        getPosition: function () {
-            return this._state.position;
+        getImageSize: function () {
+            return {
+                width: this._properties.image.width,
+                height: this._properties.image.height
+            };
         },
 
-        setPosition: function (position) {
-            this._state.position = Object.assign(this._state.position, position);
-            this._setTransform(this._state.position);
+        getState: function () {
+            // !
+            return Object.assign({}, this._state);
+        },
+
+        setState: function (state) {
+            // !
+            this._state = Object.assign({}, this._state, state);
+            this._setTransform(this._state);
         },
 
         destroy: function () {
             this._teardownDOM();
-            this._state = {
-                size: {
-                    width: 0,
-                    height: 0
-                },
-                position: {
-                    x: 0,
-                    y: 0
-                }
-            };
+            this._resetData();
         },
 
         _onImageLoaded: function (data) {
             if (this._curURL === data.url) {
                 var image = data.image;
-                this._setImage(image);
-                this.setPosition({
-                    x: - (image.width - this._state.size.width) / 2,
-                    y: - (image.height - this._state.size.height) / 2
+                this._properties.image = image;
+                // Рассчитываем такой масштаб,
+                // чтобы сразу все изображение отобразилось
+                var containerSize = this._properties.size;
+                var zoom = (image.width > image.height) ?
+                    containerSize.width / image.width :
+                    containerSize.height / image.height;
+                this.setState({
+                    positionX: - (image.width * zoom - containerSize.width) / 2,
+                    positionY: - (image.height * zoom - containerSize.height) / 2,
+                    scale: zoom
                 });
             }
         },
 
+        _setTransform: function (state) {
+            var ctx = this._holderElem.getContext('2d');
+            // Сбрасываем текущую трансформацию холста.
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.clearRect(0, 0, this._properties.size.width, this._properties.size.height);
+            // Устаналиваем новую
+            ctx.translate(state.pivotPointX, state.pivotPointY);
+            ctx.scale(state.scale, state.scale);
+            ctx.rotate(state.angle);
+            // Отрисовываем изображение с учетом текущей "стержневой" точки
+            ctx.drawImage(
+                this._properties.image,
+                (state.positionX - state.pivotPointX) / state.scale,
+                (state.positionY - state.pivotPointY) / state.scale
+            );
+        },
+
         _setupDOM: function (params) {
-            this._state.size.width = params.size.width;
-            this._state.size.height = params.size.height;
+            this._properties.size.width = params.size.width;
+            this._properties.size.height = params.size.height;
 
             var containerElem = document.createElement('image-viewer');
-            this._holderElem = document.createElement('image-viewer-inner');
-
             containerElem.className = 'image-viewer__view';
-            this._holderElem.className = 'image-viewer__inner';
-
             containerElem.style.width = params.size.width + 'px';
             containerElem.style.height = params.size.height + 'px';
+
+            this._holderElem = document.createElement('canvas');
+            this._holderElem.setAttribute('width', params.size.width);
+            this._holderElem.setAttribute('height', params.size.height);
 
             containerElem.appendChild(this._holderElem);
             params.elem.appendChild(containerElem);
@@ -88,19 +102,26 @@ ym.modules.define('shri2017.imageViewer.View', [
             this._curURL = null;
         },
 
-        _setImage: function (image) {
-            this._holderElem.style.width = image.width + 'px';
-            this._holderElem.style.height = image.height + 'px';
-            this._holderElem.style.backgroundImage = 'url(\'' + image.src + '\')';
-        },
+        _resetData: function () {
+            this._properties = {
+                size: {
+                    width: 0,
+                    height: 0
+                },
+                image: {
+                    width: 0,
+                    height: 0
+                }
+            };
 
-        _setTransform: function (position) {
-            this._holderElem.style.transform = [
-                'translate3d(',
-                position.x, 'px,',
-                position.y, 'px,',
-                '0)'
-            ].join('');
+            this._state = {
+                positionX: 0,
+                positionY: 0,
+                scale: 1,
+                angle: 0,
+                pivotPointX: 0,
+                pivotPointY: 0
+            };
         }
     });
 
