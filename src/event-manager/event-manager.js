@@ -30,6 +30,20 @@ ym.modules.define('shri2017.imageViewer.EventManager', [
             types.split(' ').forEach(function (type) {
                 elem.removeEventListener(type, callback);
             }, this);
+        },
+
+        _calculateElementPreset: function (elem) {
+            // !
+            var result = {
+                x: 0,
+                y: 0
+            };
+            while (elem) {
+                result.x += elem.offsetLeft;
+                result.y += elem.offsetTop;
+                elem = elem.offsetParent;
+            }
+            return result;
         }
     });
 
