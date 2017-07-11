@@ -26,3 +26,8 @@ npm run watch
 - Заголовок письма должен быть "Домашнее задание ШРИ, <Фамилия> <Имя>"
 - Дедлайн - 18 июля 23.00
 - Меня можно найти еще в телеграме @vsesh
+
+## Pointer Events
+- Pointer Events на caniuse http://caniuse.com/#search=pointer
+- Pointer Events работает из коробки в Edge/IE11 и Google Chrome (Window, Mac, Android)
+- Виртуальную машину с образами Windows с Edge/IE можно скачать - https://developer.microsoft.com/en-us/microsoft-edge/tools/vms/
