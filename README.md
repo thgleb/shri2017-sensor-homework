@@ -13,7 +13,7 @@ npm run watch
 - Pointer Events https://developer.mozilla.org/en-US/docs/Web/API/Pointer_events
 - Видео о сенсорных событиях с ШРИ 2016 https://www.youtube.com/watch?v=VZAcd2svW7w
 - Более подробный разбор Pointer Events https://www.youtube.com/watch?v=JxTiGnvwxHA
-
+- Примеры из последнего доклада https://github.com/vsesh/pointer-events-examples
 
 ## Домашнее задание
 ### Задачи
