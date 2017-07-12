@@ -63,7 +63,8 @@ ym.modules.define('shri2017.imageViewer.EventManager', [
                 targetPoint: {
                     x: event.clientX - elemOffset.x,
                     y: event.clientY - elemOffset.y
-                }
+                },
+                distance: 1
             });
         },
 
@@ -76,16 +77,44 @@ ym.modules.define('shri2017.imageViewer.EventManager', [
                 touches = event.changedTouches;
             }
 
+            var targetPoint;
+            var distance = 1;
             var elemOffset = this._calculateElementOffset(this._elem);
-            var targetPoint = {
-                x: touches[0].clientX - elemOffset.x,
-                y: touches[0].clientY - elemOffset.y
-            };
+
+            if (touches.length === 1) {
+                targetPoint = {
+                    x: touches[0].clientX,
+                    y: touches[0].clientY
+                };
+            } else {
+                var firstTouch = touches[0];
+                var secondTouch = touches[1];
+                targetPoint = this._calculateTargetPoint(firstTouch, secondTouch);
+                distance = this._calculateDistance(firstTouch, secondTouch);
+            }
+
+            targetPoint.x -= elemOffset.x;
+            targetPoint.y -= elemOffset.y;
 
             this._callback({
                 type: EVENTS[event.type],
-                targetPoint: targetPoint
+                targetPoint: targetPoint,
+                distance: distance
             });
+        },
+
+        _calculateTargetPoint: function (firstTouch, secondTouch) {
+            return {
+                x: (secondTouch.clientX + firstTouch.clientX) / 2,
+                y: (secondTouch.clientY + firstTouch.clientY) / 2
+            };
+        },
+
+        _calculateDistance: function (firstTouch, secondTouch) {
+            return Math.sqrt(
+                Math.pow(secondTouch.clientX - firstTouch.clientX, 2) +
+                Math.pow(secondTouch.clientY - firstTouch.clientY, 2)
+            );
         },
 
         _calculateElementOffset: function (elem) {
