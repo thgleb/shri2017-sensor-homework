@@ -56,19 +56,18 @@ ym.modules.define('shri2017.imageViewer.EventManager', [
                 this._removeEventListeners('mousemove mouseup', document.documentElement, this._mouseListener);
             }
 
-            var elemOffset = this._calculateElementPreset(this._elem);
+            var elemOffset = this._calculateElementOffset(this._elem);
 
             this._callback({
                 type: EVENTS[event.type],
                 targetPoint: {
-                    x: event.pageX - elemOffset.x,
-                    y: event.pageY - elemOffset.y
+                    x: event.clientX - elemOffset.x,
+                    y: event.clientY - elemOffset.y
                 }
             });
         },
 
         _touchEventHandler: function (event) {
-            // Отменяем стандартное поведение (последующие события мышки)
             event.preventDefault();
 
             var touches = event.touches;
@@ -77,11 +76,10 @@ ym.modules.define('shri2017.imageViewer.EventManager', [
                 touches = event.changedTouches;
             }
 
-            var elemOffset = this._calculateElementPreset(this._elem);
-
+            var elemOffset = this._calculateElementOffset(this._elem);
             var targetPoint = {
-                x: touches[0].pageX - elemOffset.x,
-                y: touches[0].pageY - elemOffset.y
+                x: touches[0].clientX - elemOffset.x,
+                y: touches[0].clientY - elemOffset.y
             };
 
             this._callback({
@@ -90,18 +88,12 @@ ym.modules.define('shri2017.imageViewer.EventManager', [
             });
         },
 
-        _calculateElementPreset: function (elem) {
-            // !
-            var result = {
-                x: 0,
-                y: 0
+        _calculateElementOffset: function (elem) {
+            var bounds = elem.getBoundingClientRect();
+            return {
+                x: bounds.left,
+                y: bounds.top
             };
-            while (elem) {
-                result.x += elem.offsetLeft;
-                result.y += elem.offsetTop;
-                elem = elem.offsetParent;
-            }
-            return result;
         }
     });
 
