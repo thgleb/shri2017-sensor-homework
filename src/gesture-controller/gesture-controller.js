@@ -2,7 +2,9 @@ ym.modules.define('shri2017.imageViewer.GestureController', [
     'shri2017.imageViewer.EventManager'
 ], function (provide, EventManager) {
 
-    var DBL_TAB_STEP = 0.2;
+    var DBL_TAB_STEP = 0.2,
+        WHEEL_SCALE_STEP = DBL_TAB_STEP / 100,
+        MIN_WHEEL_SCALE = 0.01;
 
     var Controller = function (view) {
         this._view = view;
@@ -41,6 +43,8 @@ ym.modules.define('shri2017.imageViewer.GestureController', [
                 } else {
                     this._processDrag(event);
                 }
+            } else if (event.type === "wheel") {
+                this._processWheel(event);
             } else {
                 this._initState = this._view.getState();
                 this._initEvent = event;
@@ -67,6 +71,17 @@ ym.modules.define('shri2017.imageViewer.GestureController', [
                 event.targetPoint,
                 state.scale + DBL_TAB_STEP
             );
+        },
+
+        _processWheel: function (event) {
+            var state = this._view.getState(),
+                scale = state.scale + WHEEL_SCALE_STEP * event.currentDelta;
+
+            if (scale < MIN_WHEEL_SCALE) {
+                scale = MIN_WHEEL_SCALE;
+            }
+
+            this._scale(event.targetPoint, scale);
         },
 
         _scale: function (targetPoint, newScale) {

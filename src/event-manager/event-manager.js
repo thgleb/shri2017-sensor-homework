@@ -5,10 +5,15 @@ ym.modules.define('shri2017.imageViewer.EventManager', [
         mousedown: 'start',
         mousemove: 'move',
         mouseup: 'end',
+
         touchstart: 'start',
         touchmove: 'move',
         touchend: 'end',
-        touchcancel: 'end'
+        touchcancel: 'end',
+
+        wheel: "wheel",
+        mousewheel: "wheel",
+        MozMousePixelScroll: "wheel",
     };
 
     function EventManager(elem, callback) {
@@ -25,14 +30,18 @@ ym.modules.define('shri2017.imageViewer.EventManager', [
         _setupListeners: function () {
             this._mouseListener = this._mouseEventHandler.bind(this);
             this._touchListener = this._touchEventHandler.bind(this);
+            this._mouseWheelListener = this._mouseWheelEventHandler.bind(this);
+
             this._addEventListeners('mousedown', this._elem, this._mouseListener);
             this._addEventListeners('touchstart touchmove touchend touchcancel', this._elem, this._touchListener);
+            this._addEventListeners('wheel mousewheel MozMousePixelScroll', this._elem, this._mouseWheelListener);
         },
 
         _teardownListeners: function () {
             this._removeEventListeners('mousedown', this._elem, this._mouseListener);
             this._removeEventListeners('mousemove mouseup', document.documentElement, this._mouseListener);
             this._removeEventListeners('touchstart touchmove touchend touchcancel', this._elem, this._touchListener);
+            this._removeEventListeners('wheel mousewheel MozMousePixelScroll', this._elem, this._mouseWheelListener);
         },
 
         _addEventListeners: function (types, elem, callback) {
@@ -100,6 +109,23 @@ ym.modules.define('shri2017.imageViewer.EventManager', [
                 type: EVENTS[event.type],
                 targetPoint: targetPoint,
                 distance: distance
+            });
+        },
+
+        _mouseWheelEventHandler: function (event) {
+            event.preventDefault();
+
+            var currentDelta = event.deltaY || event.detail || event.wheelDelta;
+            this._wheelDelta = (this._wheelDelta || 0) + currentDelta;
+
+            this._callback({
+                type: EVENTS[event.type],
+                targetPoint: {
+                    x: event.offsetX,
+                    y: event.offsetY
+                },
+                delta: this._wheelDelta,
+                currentDelta: currentDelta
             });
         },
 
