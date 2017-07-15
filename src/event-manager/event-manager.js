@@ -14,6 +14,10 @@ ym.modules.define('shri2017.imageViewer.EventManager', [
         wheel: "wheel",
         mousewheel: "wheel",
         MozMousePixelScroll: "wheel",
+
+        pointerdown: 'start',
+        pointermove: 'move',
+        pointerup: 'end'
     };
 
     function EventManager(elem, callback) {
@@ -31,17 +35,23 @@ ym.modules.define('shri2017.imageViewer.EventManager', [
             this._mouseListener = this._mouseEventHandler.bind(this);
             this._touchListener = this._touchEventHandler.bind(this);
             this._mouseWheelListener = this._mouseWheelEventHandler.bind(this);
+            this._pointerListener = this._pointerEventHandler.bind(this);
 
             this._addEventListeners('mousedown', this._elem, this._mouseListener);
-            this._addEventListeners('touchstart touchmove touchend touchcancel', this._elem, this._touchListener);
             this._addEventListeners('wheel mousewheel MozMousePixelScroll', this._elem, this._mouseWheelListener);
+
+            if ('onpointerdown' in window) {
+                this._addEventListeners('pointerdown', this._elem, this._pointerListener);
+            } else if ('ontouchstart' in window) {
+                this._addEventListeners('touchstart touchmove touchend touchcancel', this._elem, this._touchListener);
+            }
         },
 
         _teardownListeners: function () {
-            this._removeEventListeners('mousedown', this._elem, this._mouseListener);
-            this._removeEventListeners('mousemove mouseup', document.documentElement, this._mouseListener);
+            this._removeEventListeners('mousedown mousemove mouseup', this._elem, this._mouseListener);
             this._removeEventListeners('touchstart touchmove touchend touchcancel', this._elem, this._touchListener);
             this._removeEventListeners('wheel mousewheel MozMousePixelScroll', this._elem, this._mouseWheelListener);
+            this._removeEventListeners('pointerdown pointermove pointerup', this._elem, this._pointerListener);
         },
 
         _addEventListeners: function (types, elem, callback) {
@@ -68,6 +78,8 @@ ym.modules.define('shri2017.imageViewer.EventManager', [
             var elemOffset = this._calculateElementOffset(this._elem);
 
             this._callback({
+                eventSpec: "mouseevent",
+
                 type: EVENTS[event.type],
                 targetPoint: {
                     x: event.clientX - elemOffset.x,
@@ -106,6 +118,8 @@ ym.modules.define('shri2017.imageViewer.EventManager', [
             targetPoint.y -= elemOffset.y;
 
             this._callback({
+                eventSpec: "touchevent",
+
                 type: EVENTS[event.type],
                 targetPoint: targetPoint,
                 distance: distance
@@ -119,6 +133,8 @@ ym.modules.define('shri2017.imageViewer.EventManager', [
             this._wheelDelta = (this._wheelDelta || 0) + currentDelta;
 
             this._callback({
+                eventSpec: "wheelevent",
+
                 type: EVENTS[event.type],
                 targetPoint: {
                     x: event.offsetX,
@@ -126,6 +142,29 @@ ym.modules.define('shri2017.imageViewer.EventManager', [
                 },
                 delta: this._wheelDelta,
                 currentDelta: currentDelta
+            });
+        },
+
+        _pointerEventHandler: function (event) { // supporting only 1 pointer
+            event.preventDefault();
+
+            if (event.type === 'pointerdown') {
+                this._addEventListeners('pointermove pointerup', document.documentElement, this._pointerListener);
+            } else if (event.type === 'pointerup') {
+                this._removeEventListeners('pointermove pointerup', document.documentElement, this._pointerListener);
+            }
+
+            var elemOffset = this._calculateElementOffset(this._elem);
+
+            this._callback({
+                eventSpec: "pointerevent",
+
+                type: EVENTS[event.type],
+                targetPoint: {
+                    x: event.clientX - elemOffset.x,
+                    y: event.clientY - elemOffset.y
+                },
+                distance: 1
             });
         },
 
