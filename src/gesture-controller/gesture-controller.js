@@ -16,29 +16,6 @@ ym.modules.define('shri2017.imageViewer.GestureController', [
         this._lastEventTypes = '';
     };
 
-    function drawPoint(coords, color) {
-        var SIDE_SIZE = 10;
-
-        var p = document.createElement("div");
-
-        p.style.width = SIDE_SIZE + "px";
-        p.style.height = SIDE_SIZE + "px";
-
-        p.style.position = "absolute";
-
-        p.style.left = (coords.x - SIDE_SIZE / 2) + "px";
-        p.style.top = (coords.y - SIDE_SIZE / 2) + "px";
-
-        p.style.background = color || "white";
-        p.style.boxShadow = "0 0 3px rgba(0,0,0,.8)";
-        p.style.borderRadius = "50%";
-
-        var container = document.querySelector("image-viewer");
-        
-        container.appendChild(p);
-        container.style.position = "relative";
-    }
-
     Object.assign(Controller.prototype, {
         destroy: function () {
             this._eventManager.destroy();
