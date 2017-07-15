@@ -43,23 +43,28 @@ ym.modules.define('shri2017.imageViewer.GestureController', [
                 this._oneTouchZoom = true;
             }
 
-            if (event.type === 'move') {
-                if (event.distance > 1 && event.distance !== this._initEvent.distance) {
-                    this._processMultitouch(event);
-                } else if (this._oneTouchZoom) {
-                    this._processOneTouch(event);
-                } else {
-                    this._processDrag(event);
-                }
-            } else if (event.type === "wheel") {
-                this._processWheel(event);
+            switch (event.type) {
+                case 'move':
+                    if (event.distance > 1 && event.distance !== this._initEvent.distance) {
+                        this._processMultitouch(event);
+                        this._oneTouchZoom = false;
+                    } else if (this._oneTouchZoom) {
+                        this._processOneTouch(event);
+                    } else {
+                        this._processDrag(event);
+                        this._oneTouchZoom = false;
+                    }
+                    break;
 
-                this._oneTouchZoom = false;
-            } else {
-                this._initState = this._view.getState();
-                this._initEvent = event;
-
-                this._oneTouchZoom = false;
+                case 'wheel':
+                    this._processWheel(event);
+                    this._oneTouchZoom = false;
+                    break;
+                    
+                default:
+                    this._initState = this._view.getState();
+                    this._initEvent = event;
+                    this._oneTouchZoom = false;
             }
         },
 
