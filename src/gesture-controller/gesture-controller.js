@@ -87,7 +87,7 @@ ym.modules.define('shri2017.imageViewer.GestureController', [
             var state = this._view.getState();
             this._scale(
                 event.targetPoint,
-                state.scale + DBL_TAB_STEP
+                state.scale + DBL_TAP_STEP
             );
         },
 
