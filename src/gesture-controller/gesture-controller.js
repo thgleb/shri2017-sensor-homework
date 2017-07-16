@@ -5,7 +5,7 @@ ym.modules.define('shri2017.imageViewer.GestureController', [
     var DBL_TAB_STEP = 0.2,
         WHEEL_SCALE_STEP = DBL_TAB_STEP / 100,
         MIN_WHEEL_SCALE = 0.01,
-        ONE_TOUCH_SCALE_STEP = DBL_TAB_STEP / 50;
+        ONE_TOUCH_SCALE_STEP = DBL_TAB_STEP / 10;
 
     var Controller = function (view) {
         this._view = view;
@@ -102,7 +102,14 @@ ym.modules.define('shri2017.imageViewer.GestureController', [
         },
 
         _processOneTouch: function(event) {
-            // TODO: allow only by touch (finger)
+            var isTouch = (
+                (event.eventSpec === 'pointerevent' && event.pointerType === 'touch')
+                || event.eventSpec === 'touchevent'
+            );
+
+            if (!isTouch) {
+                return;
+            }
 
             var sign = this._initEvent.targetPoint.y - event.targetPoint.y > 0 ? 1 : -1;
             var state = this._view.getState();
