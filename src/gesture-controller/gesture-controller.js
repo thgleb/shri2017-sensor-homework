@@ -22,8 +22,6 @@ ym.modules.define('shri2017.imageViewer.GestureController', [
         },
 
         _eventHandler: function (event) {
-            console.log(event);
-
             var state = this._view.getState();
 
             // dblclick

@@ -149,15 +149,16 @@ ym.modules.define('shri2017.imageViewer.EventManager', [
             event.preventDefault();
 
             if (event.type === 'pointerdown') {
-                this._addEventListeners('pointermove pointerup', document.documentElement, this._pointerListener);
-            } else if (event.type === 'pointerup') {
-                this._removeEventListeners('pointermove pointerup', document.documentElement, this._pointerListener);
+                this._addEventListeners('pointermove pointerup pointercancel', document.documentElement, this._pointerListener);
+            } else if (event.type === 'pointerup' || event.type === 'pointercancel') {
+                this._removeEventListeners('pointermove', document.documentElement, this._pointerListener);
             }
 
             var elemOffset = this._calculateElementOffset(this._elem);
 
             this._callback({
                 eventSpec: "pointerevent",
+                pointerType: event.pointerType,
 
                 type: EVENTS[event.type],
                 targetPoint: {
