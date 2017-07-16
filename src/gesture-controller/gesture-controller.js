@@ -1,6 +1,7 @@
 ym.modules.define('shri2017.imageViewer.GestureController', [
-    'shri2017.imageViewer.EventManager'
-], function (provide, EventManager) {
+    'shri2017.imageViewer.EventManager',
+    'util.extend'
+], function (provide, EventManager, extend) {
 
     var DBL_TAP_STEP = 0.2,
         WHEEL_SCALE_STEP = DBL_TAP_STEP / 100,
@@ -16,7 +17,7 @@ ym.modules.define('shri2017.imageViewer.GestureController', [
         this._lastEventTypes = '';
     };
 
-    Object.assign(Controller.prototype, {
+    extend(Controller.prototype, {
         destroy: function () {
             this._eventManager.destroy();
         },
