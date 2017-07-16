@@ -2,10 +2,10 @@ ym.modules.define('shri2017.imageViewer.GestureController', [
     'shri2017.imageViewer.EventManager'
 ], function (provide, EventManager) {
 
-    var DBL_TAB_STEP = 0.2,
-        WHEEL_SCALE_STEP = DBL_TAB_STEP / 100,
+    var DBL_TAP_STEP = 0.2,
+        WHEEL_SCALE_STEP = DBL_TAP_STEP / 100,
         MIN_WHEEL_SCALE = 0.01,
-        ONE_TOUCH_SCALE_STEP = DBL_TAB_STEP / 10;
+        ONE_TOUCH_SCALE_STEP = DBL_TAP_STEP / 10;
 
     var Controller = function (view) {
         this._view = view;
